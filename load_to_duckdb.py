@@ -20,7 +20,7 @@ con.execute("""
     CREATE TABLE emails_raw AS SELECT * FROM df;""")
 
 # Parse and Pre-Process
-logger.info("parsing emails...")
+logger.info("parsing emails ...")
 
 con.sql("""
 -- Drop the existing table if it exists (optional)
@@ -33,7 +33,7 @@ SELECT
     regexp_extract(message, '\nDate: ([^\n]*)\n', 1) AS Date,
     STRPTIME(REGEXP_REPLACE(regexp_extract(message, '\nDate: ([^\n]*)\n', 1), '\s*\([A-Z]+\)', ''), '%a, %d %b %Y %H:%M:%S %z') AS parsed_date,
     regexp_extract(message, '\nFrom: ([^\n]*)\n', 1) AS "From",
-    REGEXP_REPLACE(regexp_extract(message, '\nTo: ([^\n]*)\n', 1), ',+$', '') AS "To",
+    REGEXP_REPLACE(regexp_extract(message, '\nTo: ([^\n]*)\n', 1), ',\s*$', '') AS "To",
     regexp_extract(message, '\nSubject: ([^\n]*)\n', 1) AS Subject,
     regexp_extract(message, '\nMime-Version: ([^\n]*)\n', 1) AS MimeVersion,
     regexp_extract(message, '\nContent-Type: ([^\n]*)\n', 1) AS ContentType,
