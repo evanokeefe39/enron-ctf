@@ -22,7 +22,8 @@ WITH quality_check AS (
         CAST(SUM(CASE WHEN "From" IS NULL OR TRIM("From") = '' THEN 1 ELSE 0 END) AS VARCHAR) AS missing_or_empty_from,
         CAST(SUM(CASE WHEN "To" IS NULL OR TRIM("To") = '' THEN 1 ELSE 0 END) AS VARCHAR) AS missing_or_empty_to,
         CAST(SUM(CASE WHEN Subject IS NULL OR TRIM(Subject) = '' THEN 1 ELSE 0 END) AS VARCHAR) AS missing_or_empty_subject,
-        CAST(SUM(CASE WHEN Body IS NULL OR TRIM(Body) = '' THEN 1 ELSE 0 END) AS VARCHAR) AS missing_or_empty_body
+        CAST(SUM(CASE WHEN Body IS NULL OR TRIM(Body) = '' THEN 1 ELSE 0 END) AS VARCHAR) AS missing_or_empty_body,
+        CAST(CAST(SUM(CEIL(LENGTH(Body) / 4.0)/1000000) AS INTEGER) AS VARCHAR) AS total_estimated_tokens_millions
     FROM emails_parsed
 )
 SELECT Metric, Value
@@ -38,7 +39,8 @@ UNPIVOT (
         missing_or_empty_from,
         missing_or_empty_to,
         missing_or_empty_subject,
-        missing_or_empty_body
+        missing_or_empty_body,
+        total_estimated_tokens_millions
     )
 )
 ORDER BY Metric;
